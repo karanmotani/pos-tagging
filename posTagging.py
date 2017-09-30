@@ -47,13 +47,57 @@ def mostProbablePOS(dictionary):
 	return dictionary
 
 
+def mostProbableErrors(tokens, tags, dictionary):
+
+	modTags = []
+	error = 0
+
+	for word in tokens:
+		modTags.append(dictionary[word])
+
+
+	for i in range(len(modTags)):
+		# print (modTags[i], tags[i])
+		if modTags[i] != tags[i]:
+			error += 1
+
+
+	return modTags
+
+
+def brillsPOS(tags, modTags):
+
+	template = {}
+
+	for i in range(len(modTags)):
+		if modTags[i] != tags[i]:
+			# tupel = (PREVIOUS_TAG, FROM, TO)
+			tupel = (modTags[i-1], modTags[i], tags[i])
+			if tupel in template:
+				template[tupel] += 0
+			else:
+				template[tupel] = 0
+
+	# print (template)
+
+
+	sortedTemplate = sorted(template.items(), key=lambda x : x[1], reverse=True)
+
+	print (len(sortedTemplate))
+	return template
+
 
 if __name__ == '__main__':
 
-	fileName = 'HW2_F17_NLP6320_POSTaggedTrainingSet-Unix.txt'
+	fileName = 'corpus.txt'
 	
 	data, tokens, tags = readData(fileName)
 
 	unigrams = createUnigrams(tokens, tags)
 
 	mostProbablePOS = mostProbablePOS(unigrams)
+
+	modTags = mostProbableErrors(tokens, tags, mostProbablePOS)
+
+	sortedTemplate = brillsPOS(tags, modTags)
+
