@@ -21,9 +21,9 @@ def createUnigrams(tokens, tags):
 
 	tokenTags = {}
 
-	# 
+	#
 	# {and: [VB, NN, VB, NN]}
-	# 
+	#
 
 	for i in range(len(tokens)):
 
@@ -86,11 +86,40 @@ def brillsPOS(tags, modTags):
 	print (len(sortedTemplate))
 	return template
 
+def checkError(tags, modTags, sortedTemplate):
+    # bad
+	error = 0
+	badError = 0
+	goodError = 0
+	for k, v in sortedTemplate.items():
+		prev = k[0]
+		form = k[1]
+		to = k[2]
+		# print (prev, form)
+
+		for i in range(len(tags)-1):
+			if tags[i+1] == form:
+				if tags[i] == prev:
+					badError += 1
+					sortedTemplate[k] -= 1
+			elif tags[i+1] == to:
+				if tags[i] == prev:
+					goodError += 1
+					sortedTemplate[k] += 1
+	print (len(sortedTemplate))
+	print (sortedTemplate)
+	# print (sum(sortedTemplate.values()))
+
+	sortedTemplate = sorted(sortedTemplate.items(), key=lambda x: x[1], reverse=True)
+	print (sortedTemplate)
+	# print (goodError)
+	# print (badError)
+
 
 if __name__ == '__main__':
 
-	fileName = 'corpus.txt'
-	
+	fileName = 'HW2_F17_NLP6320_POSTaggedTrainingSet-Unix.txt'
+
 	data, tokens, tags = readData(fileName)
 
 	unigrams = createUnigrams(tokens, tags)
@@ -101,3 +130,4 @@ if __name__ == '__main__':
 
 	sortedTemplate = brillsPOS(tags, modTags)
 
+	checkError(tags, modTags, sortedTemplate)
